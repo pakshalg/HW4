@@ -21,21 +21,21 @@ $(document).ready(function() {
   $('#inputNum').validate({
     rules: {
       xMin: { required: true, number: true, range: [-50, 50] },
-      xMax: { required: true, number: true, range: [-50, 50] },
+      xMax: { required: true, number: true, range: [-50, 50], greaterThan: "#xMin" },
       yMin: { required: true, number: true, range: [-50, 50] },
-      yMax: { required: true, number: true, range: [-50, 50] }
+      yMax: { required: true, number: true, range: [-50, 50], greaterThan: "#yMin" }
     },
     messages: {
       xMin: { required: "Please enter a starting row number.", number: "Enter a valid number.", range: "Number must be between -50 and 50." },
-      xMax: { required: "Please enter an ending row number.", number: "Enter a valid number.", range: "Number must be between -50 and 50." },
+      xMax: { required: "Please enter an ending row number.", number: "Enter a valid number.", range: "Number must be between -50 and 50.", greaterThan: "Row end must be greater than or equal to row start." },
       yMin: { required: "Please enter a starting column number.", number: "Enter a valid number.", range: "Number must be between -50 and 50." },
-      yMax: { required: "Please enter an ending column number.", number: "Enter a valid number.", range: "Number must be between -50 and 50." }
+      yMax: { required: "Please enter an ending column number.", number: "Enter a valid number.", range: "Number must be between -50 and 50.", greaterThan: "Column end must be greater than or equal to column start." }
     },
     errorPlacement: function(error, element) {
       error.insertAfter(element);
       error.css({
-        'display': 'inline-block',  // Ensure error message stays on the same line
-        'margin-left': '10px',       // Add left margin to error message
+        'display': 'inline-block',
+        'margin-left': '10px',
       });
     },
     submitHandler: function(form) {
@@ -47,6 +47,11 @@ $(document).ready(function() {
       generateMultiplicationTable(xMin, xMax, yMin, yMax);
     }
   });
+
+  // Custom validation method to check if the maximum value is greater than or equal to the minimum value
+  $.validator.addMethod("greaterThan", function(value, element, param) {
+    return parseInt(value) >= parseInt($(param).val());
+  }, "The value must be greater than or equal to the minimum value.");
 });
 
 function generateMultiplicationTable(xMin, xMax, yMin, yMax) {
